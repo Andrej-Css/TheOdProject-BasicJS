@@ -1,28 +1,26 @@
+
 let myLibrary = [];
-
-function Book(title,author,read=false){
-    this.title = title; 
-    this.author = author; 
-    this.id = crypto.randomUUID();
-    this.read = read; 
-}
-
-Book.prototype.toggleReadStatus = function(){
-    this.read = !this.read;
-}
-
-console.log (Book); 
-console.log ("my library is:",myLibrary);
-
-function addBookToLibrary  (title, author){
-    const newBook = new Book (title, author);
-    myLibrary.push(newBook);
-}
-
 let btn = document.querySelector(".addBook");
 let elementUI = document.querySelector(".book-list");
 
-console.log(myLibrary); 
+class Book{
+    constructor (title,author,read=false){
+        this.title = title; 
+        this.author = author; 
+        this.id = crypto.randomUUID();
+        this.read = read; 
+    }
+    toggleReadStatus () {
+        return this.read = !this.read; 
+    }
+}
+
+ class addBookToLibrary {
+    constructor (title, author){
+     let newBook = new Book (title, author);
+     myLibrary.push(newBook);
+    }
+}
 
 function createAndPopulateTable(Book){
     
@@ -88,24 +86,26 @@ function addNewBook(event){
     // let id = document.querySelector("idContent").value; 
     
     let book = new Book (title,author); 
-    addBookToLibrary(title,author); 
+    //addBookToLibrary(title,author); 
     myLibrary.push(book);
     createAndPopulateTable(book);
     console.log(book);
 
 
-    document.querySelector(".author-input").value = " "; 
-    document.querySelector(".title-input").value = " ";  
+    document.querySelector(".author-input").value = ""; 
+    document.querySelector(".title-input").value = "";  
 
 }
 
-function createFormInDOM (){
+function createFormInDOM (Book){
     let formElement = document.createElement("form");
 
     let formInputAuthor = document.createElement("input");
     formInputAuthor.type = "text";
+    formInputAuthor.placeholder = "Author Name";
     let formInputTitle = document.createElement("input");
     formInputTitle.type = "text"; 
+    formInputTitle.placeholder = "Title";
 
     let formSubmitButton = document.createElement("button"); 
     
