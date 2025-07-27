@@ -13,12 +13,9 @@ class Book{
     toggleReadStatus () {
         return this.read = !this.read; 
     }
-}
-
- class addBookToLibrary {
-    constructor (title, author){
-     let newBook = new Book (title, author);
-     myLibrary.push(newBook);
+    addBookToLibrary(title,author){
+        let newBook = new Book (title, author);
+        this.myLibrary.push(newBook);
     }
 }
 
