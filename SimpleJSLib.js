@@ -1,11 +1,6 @@
-
-let myLibrary = [];
 let btn = document.querySelector(".addBook");
-
 let elementUI = document.querySelector(".book-list");
 elementUI.classList.add("book-UI");
-
-btn.addEventListener("click", addBookFunct);
 
 class Book{
     constructor (title,author,read=false){
@@ -19,17 +14,10 @@ class Book{
     }
 }
 
-function addBookToLibrary(title,author){
-    let newBook = new Book (title, author);
-    myLibrary.push(newBook);
-    return newBook;
-}
-
 class createFormInDOM {
     constructor (){
         this.formElement = document.createElement("form");
-        
-        
+    
         this.formInputAuthor = document.createElement("input");
         this.formInputAuthor.type = "text";
         this.formInputAuthor.placeholder = "Author Name";
@@ -48,22 +36,57 @@ class createFormInDOM {
         this.formElement.appendChild(this.formInputAuthor);
         this.formElement.appendChild(this.formInputTitle);
         this.formElement.appendChild(this.formSubmitButton);
+
         elementUI.appendChild(this.formElement);
     }
-    
     handleClick (){
-        this.formSubmitButton.addEventListener("click", addNewBook);   
+        this.formSubmitButton.addEventListener("click", (event) => libManager.addNewBook(event));   
     }
 }
 
-function addBookFunct(){
-    console.log("clicked");
-    let bookUI = new createFormInDOM(); 
-    bookUI.render();
-    bookUI.handleClick();
-    btn.disabled = true;
-
+class LibManager {
+    constructor (){
+        this.myLibrary = [];
+    }
+    render () { 
+        this.myLibrary.forEach((element) => {
+            console.log("display element", element);
+            let createEl = new createAndPopulateTable(element);
+            createEl.render();
+        })  
+    }
+    addBookToLibrary(title,author){
+        let newBook = new Book (title, author);
+        this.myLibrary.push(newBook);
+    }
+    removeBookFromLibrary(bookID){
+        this.myLibrary = this.myLibrary.filter(book=>book.id!=bookID);
+    }
+    addBookFunct(){
+        this.bookUI = new createFormInDOM(); 
+        this.bookUI.render();
+        this.bookUI.handleClick();
+        btn.disabled = true;
+    }
+    addNewBook(event){
+        event.preventDefault(); 
+    
+        let author = document.querySelector(".author-input").value;
+        let title = document.querySelector(".title-input").value;
+        
+        let book = new Book (title,author); 
+        this.myLibrary.push(book);
+        let bookUIEL = new createAndPopulateTable(book);
+        bookUIEL.render();
+        console.log(book);
+    
+        document.querySelector(".author-input").value = ""; 
+        document.querySelector(".title-input").value = "";  
+    }
 }
+
+let libManager = new LibManager();
+btn.addEventListener("click", () => libManager.addBookFunct());
 
 class createAndPopulateTable{
     constructor(Book){
@@ -83,10 +106,8 @@ class createAndPopulateTable{
         this.elementButton = document.createElement("button");
         this.elementButton.textContent="Delete?";
         this.elementButton.classList.add("remove-btn");
-        this.elementButton.addEventListener("click", (event)=>this.deleteBook(event));
-        
+        this.elementButton.addEventListener("click", (event)=>this.deleteBook(event)); 
     }
-
     render (){
         this.elementTitle.appendChild(this.titleContent);
         this.elementAuthor.appendChild(this.authorContent);
@@ -100,62 +121,18 @@ class createAndPopulateTable{
 
         console.log("data book is", this.bookElement.dataset.book)
     }
-
     deleteBook (event) {
         console.log("delete in progress")
         this.bookElement = event.target.closest("[data-book]");
         this.bookID = this.bookElement.dataset.book;
-        removeBookFromLibrary(this.bookID);
+        libManager.removeBookFromLibrary(this.bookID);
         this.bookElement.remove();
     }
-
     readStatus(){
         this.readStatusButton.textContent = this.book.read ? "Mark as Unread" : "Mark as Read";
         this.readStatusButton.addEventListener("click", ()=>{
             this.book.toggleReadStatus(); 
             this.readStatusButton.textContent = this.book.read ? "Mark as Unread" : "Mark as Read"; 
         })  
-}
-}
-
-// Wroking on Bundling up all the remaining classes that deal with book instance 
-
-// class LibManager {
-//     constructor (){
-//         this.myLibrary = [];
-//     }
-
-//     render () { 
-//         this.myLibrary.forEach((element) => {
-//             console.log("display element", element);
-//             let createEl = new createAndPopulateTable(element);
-//             createEl.render();
-//         })
-        
-//     }
-
-// }
-
-function addNewBook(event){
-    event.preventDefault(); 
-
-    
-    let author = document.querySelector(".author-input").value;
-    let title = document.querySelector(".title-input").value;
-    // let id = document.querySelector("idContent").value; 
-    
-    let book = new Book (title,author); 
-    myLibrary.push(book);
-    let bookUIEL = new createAndPopulateTable(book);
-    bookUIEL.render();
-    console.log(book);
-
-
-    document.querySelector(".author-input").value = ""; 
-    document.querySelector(".title-input").value = "";  
-
-}
-
-function removeBookFromLibrary(bookID){
-    myLibrary = myLibrary.filter(book=>book.id!=bookID);
+    }
 }
